@@ -31,6 +31,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h4 class="modal-title">Uploading...</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
         <div class="modal-body">
           <div class="progress">
@@ -82,11 +83,8 @@
 	      $("#modal-progress").modal("show");
 	    },
 
-	    stop: function (e) {
-	      $("#modal-progress").modal("hide");
-	    },
-
 	    progressall: function (e, data) {
+	      console.log(data)
 	      var progress = parseInt(data.loaded / data.total * 100, 10);
 	      var strProgress = progress + "%";
 	      $(".progress-bar").css({"width": strProgress});

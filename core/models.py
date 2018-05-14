@@ -12,7 +12,7 @@ def save_file(instance, filename):
         folder = "pictures/"
     else:
         folder = "video/"
-        
+
     path = ''.join([date.today().strftime(
         'uploads/%Y/%m/%d/'), folder, filename])
 
@@ -20,6 +20,10 @@ def save_file(instance, filename):
 
 
 class MediaFile(models.Model):
+
     title = models.CharField(max_length=255, blank=True, null=True)
     file = models.FileField(upload_to=save_file)
     uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.id) + " " + str(self.file.name)

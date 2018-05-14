@@ -4,7 +4,7 @@
 ## Running Locally
 
 ```bash
-git clone url-to-repo
+git clone https://github.com/basiljose1/mediahost.git
 ```
 
 ```bash
