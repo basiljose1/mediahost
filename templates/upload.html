@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block content %}
+ <div style="margin-bottom: 20px;">
+    <button type="button" class="btn btn-primary js-upload-media">
+      <span class="glyphicon glyphicon-cloud-upload"></span> Upload Media
+    </button>
+    <input id="fileupload" type="file" name="file" multiple
+           style="display: none;"
+           data-url="{% url 'media_upload' %}"
+           data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'>
+  </div>
+
+  <table id="gallery" class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Media</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for media in medias %}
+        <tr>
+          <td><a href="{{ media.file.url }}">{{ media.file.name }}</a></td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="modal fade" id="modal-progress" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Uploading...</h4>
+        </div>
+        <div class="modal-body">
+          <div class="progress">
+            <div class="progress-bar" role="progressbar" style="width: 0%;">0%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block javascript %}
+  {# JQUERY FILE UPLOAD SCRIPTS #}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.21.0/js/vendor/jquery.ui.widget.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.21.0/js/jquery.iframe-transport.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.21.0/js/jquery.fileupload.js"></script>
+
+  {# PHOTOS PAGE SCRIPTS #}
+  <script type="text/javascript">
+  	$(function () {
+
+	  $(".js-upload-media").click(function () {
+	    $("#fileupload").click();
+	  });
+
+	  $("#fileupload").fileupload({
+
+	  	add: function(e, data) {
+                var uploadErrors = [];
+                var acceptFileTypes = /^(video|image)\//i;
+                console.log(data.originalFiles[0]['type'])
+                if(data.originalFiles[0]['type'].length && !acceptFileTypes.test(data.originalFiles[0]['type'])) {
+                    uploadErrors.push('Upload Image/Video file');
+                }
+                if(data.originalFiles[0]['size'] > 20000000) {
+                    uploadErrors.push('Filesize is greater than 20MB');
+                }
+                if(uploadErrors.length > 0) {
+                    alert(uploadErrors.join("\n"));
+                } else {
+                    data.submit();
+                }
+        },
+
+	    dataType: 'json',
+	    sequentialUploads: true,
+
+	    start: function (e) {
+	      $("#modal-progress").modal("show");
+	    },
+
+	    stop: function (e) {
+	      $("#modal-progress").modal("hide");
+	    },
+
+	    progressall: function (e, data) {
+	      var progress = parseInt(data.loaded / data.total * 100, 10);
+	      var strProgress = progress + "%";
+	      $(".progress-bar").css({"width": strProgress});
+	      $(".progress-bar").text(strProgress);
+	    },
+
+	    done: function (e, data) {
+	      if (data.result.is_valid) {
+	        $("#gallery tbody").prepend(
+	          "<tr><td><a href='" + data.result.url + "'>" + data.result.name + "</a></td></tr>"
+	        )
+	      }
+	    }
+
+	  });
+
+	});
+  </script>
+{% endblock %}
