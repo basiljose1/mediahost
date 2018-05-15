@@ -34,9 +34,9 @@
           <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
         <div class="modal-body">
-          <div class="progress">
+          <!-- <div class="progress">
             <div class="progress-bar" role="progressbar" style="width: 0%;">0%</div>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -83,12 +83,14 @@
 	      $("#modal-progress").modal("show");
 	    },
 
-	    progressall: function (e, data) {
-	      console.log(data)
+	    progress: function (e, data) {
+	      var name = Math.floor((Math.random() * 10) + 1)
 	      var progress = parseInt(data.loaded / data.total * 100, 10);
 	      var strProgress = progress + "%";
-	      $(".progress-bar").css({"width": strProgress});
-	      $(".progress-bar").text(strProgress);
+
+        appendText(name)
+	      $("."+name).css({"width": strProgress});
+	      $("."+name).text(strProgress);
 	    },
 
 	    done: function (e, data) {
@@ -102,5 +104,10 @@
 	  });
 
 	});
+
+  function appendText(string) {
+    var txt1 = '<div class="progress"><div class="progress-bar '+string+'" role="progressbar" style="width: 0%;">0%</div></div>';              
+    $(".modal-body").append(txt1);     
+  }
   </script>
 {% endblock %}
