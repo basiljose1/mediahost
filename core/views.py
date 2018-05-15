@@ -5,8 +5,13 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views import View
 
+from filebrowser.sites import site
+from filebrowser.base import FileListing
+
 from core.forms import MediaFileForm
 from core.models import MediaFile
+
+import os
 
 
 class MediaUploadView(View):
@@ -23,3 +28,20 @@ class MediaUploadView(View):
         else:
             data = {'is_valid': False}
         return JsonResponse(data)
+
+class MediaHierarchyView(View):
+    def get(self, request):
+        query = request.GET.copy()
+        path = u'%s' % os.path.join(site.storage.location,'uploads/' ,query.get('dir', ''))
+        filelisting = FileListing(path, sorting_by='date', sorting_order='desc')
+        listing = filelisting.files_listing_filtered()
+        files = []
+        for fileobject in listing:
+            files.append({
+                'name':fileobject.filename,
+                'is_folder':fileobject.is_folder,
+                'filetype':fileobject.filetype
+                })
+        return render(self.request, 'home.html', {'files':files, 'query':query.get('dir', '')})
+
+

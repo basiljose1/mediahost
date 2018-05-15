@@ -1,5 +1,35 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div>
+	<span style="padding: 10px 0px"><b>Hierarchy:</b>  uploads/{{query}}</span>
+</div>
+<table id="gallery" class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Media</th>
+        <th>Name</th>
+        <th>thumb</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for f in files %}
+        <tr>
+          <td>{{f.filetype}}</td>
+          <td>{% if f.is_folder %} <a href="?dir={% if query %}{{query}}/{% endif %}{{f.name}}">{{f.name}}</a> {% else %} <a href="/media/uploads/{{query}}/{{f.name}}" target="_blank">{{f.name}}</a> {% endif %}</td>
+          <td>{% if f.is_folder %} <img src="http://pngimg.com/uploads/folder/folder_PNG8773.png" width="32" height="auto"> {% else %} {% if f.filetype == 'Image' %} <img src="/media/uploads/{{query}}/{{f.name}}"  width="50" height="auto">
+          	{% else %}
+          	<video width="60" height="auto">
+			  <source src="/media/uploads/{{query}}/{{f.name}}" type="video/mp4">
+			  <source src="/media/uploads/{{query}}/{{f.name}}" type="video/ogg">
+			Your browser does not support the video tag.
+			</video>
+
+           {% endif %} 
+       {% endif %}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 
 {% endblock %}
